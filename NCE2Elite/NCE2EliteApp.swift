@@ -1,5 +1,9 @@
-/// NCE2EliteApp — @main 入口
-/// 音频会话配置 + 中断处理
+//
+//  NCE2EliteApp.swift
+//  NCE2Elite
+//
+//  App entry point. Configures audio session, SwiftData, and splash screen.
+//
 
 import SwiftUI
 import SwiftData
@@ -7,10 +11,14 @@ import AVFoundation
 
 @main
 struct NCE2EliteApp: App {
+    @State private var showSplash = true
     @AppStorage("displayMode") private var displayModeRaw: String = DisplayMode.system.rawValue
 
+    /// Shared SwiftData model container for LessonProgress.
     let sharedModelContainer: ModelContainer = {
-        let schema = Schema([LessonProgress.self])
+        let schema = Schema([
+            LessonProgress.self,
+        ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {
@@ -20,16 +28,32 @@ struct NCE2EliteApp: App {
         }
     }()
 
+    // MARK: - Body
+
     var body: some Scene {
         WindowGroup {
-            RootTabView()
-                .modelContainer(sharedModelContainer)
-                .onAppear {
-                    configureAudioSession()
+            ZStack {
+                Color(red: 0.01, green: 0.04, blue: 0.10)
+                    .ignoresSafeArea()
+
+                RootTabView()
+                    .modelContainer(sharedModelContainer)
+                    .preferredColorScheme(colorScheme)
+
+                if showSplash {
+                    SplashView {
+                        showSplash = false
+                    }
+                    .transition(.opacity)
                 }
-                .preferredColorScheme(colorScheme)
+            }
+            .onAppear {
+                configureAudioSession()
+            }
         }
     }
+
+    // MARK: - Display Mode
 
     private var displayMode: DisplayMode {
         DisplayMode(rawValue: displayModeRaw) ?? .system
@@ -43,7 +67,8 @@ struct NCE2EliteApp: App {
         }
     }
 
-    /// 配置音频会话：支持后台播放、中断处理
+    // MARK: - Audio Session Configuration
+
     private func configureAudioSession() {
         do {
             let session = AVAudioSession.sharedInstance()
@@ -53,7 +78,6 @@ struct NCE2EliteApp: App {
             print("⚠️ Audio session configuration failed: \(error)")
         }
 
-        // 注册音频中断通知
         NotificationCenter.default.addObserver(
             forName: AVAudioSession.interruptionNotification,
             object: nil,

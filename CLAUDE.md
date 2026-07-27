@@ -3,7 +3,7 @@
 > 本文件是 Claude Code 在本仓库中工作的唯一权威开发规范。
 > 每次开始任务前，请先完整阅读本文件；实现与本文件冲突时，以本文件为准，如有歧义在实现前向用户确认。
 >
-> **最后更新**：2026-07-25 · 版本 1.0 · 基于 NCE3 Elite 项目规范改编（待开发）
+> **最后更新**：2026-07-27 · 版本 1.1 · 全 96 课中文译文已集成、App Icon 已就绪
 
 ---
 
@@ -64,7 +64,8 @@
 
 - 已生成标准 / 深色 / Tinted 三个变体（1024×1024 PNG）
 - 位于 `Assets.xcassets/AppIcon.appiconset/`
-- 设计：Oxford Blue 底色，Antique Gold 声波线条与书本图形
+- 设计：参照 NCE3Elite 图标风格——白色背景、Oxford Blue 边框与顶部纹饰，中央为金色 `2`（Georgia Bold），底部金色 `NCE 2` 字样
+- 生成方式：以 NCE3Elite 图标为底版，擦除中央 `3` 及底部文字后重新渲染 `2` 和 `NCE 2`
 
 ---
 
@@ -80,7 +81,7 @@
 ### 6.1 课程列表页（首页）
 - **单一扁平列表，96 课按课号 1–96 顺序显示，不做 Unit 分组/折叠**
 - 搜索：按课号或标题过滤
-- 数字快速跳转栏（底部水平滚动，每 10 课一个锚点：1 / 11 / 21 / 31 / 41 / 51 / 61 / 71 / 81 / 91，点击自动定位）
+- 数字快速跳转栏（底部水平滚动，每 16 课一个锚点：1 / 17 / 33 / 49 / 65 / 81，共 6 个，点击自动定位）
 - 每行显示：课号、标题、时长/导入状态、收藏星标、**真实播放进度条**
 - **进度条**：通过 `AVURLAsset` 读取音频文件真实时长，与 SwiftData 中 `lastPlayedPosition` 计算得出百分比（0.0–1.0），已听过的课显示蓝色进度条，未听过的无进度条
 - 未导入课程显示 ☁️ "需导入" + 点击弹窗引导去设置导入
@@ -92,7 +93,8 @@
 - 倍速播放：0.75x / 1.0x / 1.25x / 1.5x
 - **循环模式**：不循环 / 单课循环 / 列表循环（使用 AVAudioPlayerDelegate 检测播放结束）
 - **睡眠定时器**：15 / 30 / 45 / 60 分钟自动暂停，倒计时显示
-- **边听边看模式**：只听 / 边听边看，后者显示中英双语课文全文，可调字体大小
+- **边听边看模式**：只听 / 边听边看，后者显示中英双语课文全文，可调字体大小（`@AppStorage("lessonFontSize")`，13–24pt）
+- 中文译文：全 96 课 AI 翻译，集成于 `lessons.json` 的 `chineseText` 字段，与英文原文逐句对应；用户可通过导入 JSON 覆盖
 - 锁屏 Now Playing：显示课程标题、课号、进度，支持远程播放/暂停命令
 - 后台播放：锁屏不停止，配置 `UIBackgroundModes = audio` + `AVAudioSession .playback` + `beginBackgroundTask`
 
@@ -232,7 +234,7 @@ NCE2Elite/
 │   │   └── NCE2EliteComponents.swift
 │   ├── Resources/
 │   │   ├── Audio/                        // Lesson01.mp3 – Lesson96.mp3（英音）
-│   │   └── lessons.json                  // 96 课元数据 + 课文文本（开发用，不含 durationSeconds）
+│   │   └── lessons.json                  // 96 课元数据 + 中英课文文本（AI 翻译中文译文，不含 durationSeconds）
 │   ├── LaunchScreen.storyboard
 │   ├── PrivacyInfo.xcprivacy
 │   └── Assets.xcassets/
@@ -256,4 +258,5 @@ NCE2Elite/
 - 禁止硬编码颜色 HEX 值，一律通过 `NCE2Colors` 引用
 - 文字颜色用自适应 `NCE2Colors.text` / `NCE2Colors.textSecondary`，背景用 `NCE2Colors.background` / `NCE2Colors.card`
 - 禁止引入第三方依赖
-- 提交前确保编译通过：`xcodebuild -project NCE2Elite.xcodeproj -scheme NCE2Elite -destination 'platform=iOS Simulator,name=iPhone 17' build`
+- 字体大小通过 `@AppStorage("lessonFontSize")` 在 SettingsView 和 PlayerViewModel 之间同步（注意：PlayerViewModel 不能直接使用 `@AppStorage`，需通过 `UserDefaults.standard.double(forKey:)` 读取同一 key）
+- 提交前确保编译通过：`xcodebuild -project NCE2Elite.xcodeproj -scheme NCE2Elite -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation),OS=18.0' build`
