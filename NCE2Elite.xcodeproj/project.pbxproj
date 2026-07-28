@@ -256,7 +256,7 @@
 				DEVELOPMENT_TEAM = SJ8DC28NRH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "新概念英语2";
+				INFOPLIST_KEY_CFBundleDisplayName = "概念回响";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIBackgroundModes = audio;
@@ -290,7 +290,7 @@
 				DEVELOPMENT_TEAM = SJ8DC28NRH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "新概念英语2";
+				INFOPLIST_KEY_CFBundleDisplayName = "概念回响";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIBackgroundModes = audio;
